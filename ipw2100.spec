@@ -22,6 +22,7 @@ BuildRequires:	kernel-net-hostap-devel
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-headers}
 %endif
+Requires:	ipw2100-firmware
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
