@@ -4,8 +4,8 @@ Summary:	Intel® PRO/Wireless 2100 Driver for Linux.
 Name:		ipw2100
 Version:	0.46_3
 Release:	0.1
-License:        GPL v2
-Group:          Base/Kernel
+License:	GPL v2
+Group:		Base/Kernel
 URL:		http://ipw2100.sourceforge.net/
 Source0:	http://prdownloads.sourceforge.net/ipw2100/%{name}-%{version}.tgz
 Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
@@ -21,7 +21,7 @@ PRO/Wireless 2100 Network Connection mini PCI adapter.
 %package -n %kmdl_name
 %kmdl_dependencies
 Summary:	Kernel module for the Intel® PRO/Wireless 2100.
-Group:          Base/Kernel
+Group:		Base/Kernel
 PreReq:		%{kmdl_nameof hostap} = 0.1.3
 Requires:	ipw2100-firmware >= 1.1
 
