@@ -18,7 +18,6 @@ Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
 URL:		http://ipw2100.sourceforge.net/
 Patch0:		%{name}_0.46_3-2.4.patch
 Patch1:		%{name}-use-ieee802_11.h.patch
-BuildRequires:	kernel-net-hostap-devel
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-headers}
 %endif
@@ -78,11 +77,9 @@ perl -pi -e's,/sbin/depmod,:,g' Makefile
     ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
     touch include/config/MARKER
 
-
 %if %{with kernel}
 %{__make} \
-	 KSRC=%{_kernelsrcdir} \
-	 HOSTAP=%{_includedir}
+	 KSRC=%{_kernelsrcdir} 
 %endif
 
 %install
