@@ -45,7 +45,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap = 0.1.3
 Requires:	ipw2100-firmware >= 1.1
-%{?with_dist_kernel:%requires_releq_up}
+%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-net-ipw2100
@@ -63,7 +63,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap = 0.1.3
 Requires:	ipw2100-firmware >= 1.1
-%{?with_dist_kernel:%requires_releq_smp}
+%{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-smp-net-ipw2100
