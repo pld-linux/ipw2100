@@ -10,7 +10,7 @@ Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
 Version:	0.56
-%define		_rel	1
+%define		_rel	2
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
@@ -39,7 +39,7 @@ Summary:	Linux kernel module for the Intel(R) PRO/Wireless 2100
 Summary(pl):	Modu³ j±dra Linuksa dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-PreReq:		kernel-net-hostap = 0.1.3
+PreReq:		kernel-net-hostap >= 0.1.3
 Requires:	ipw2100-firmware >= 1.2
 Requires:	hotplug
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -58,7 +58,7 @@ Summary:	Linux SMP kernel module for the Intel(R) PRO/Wireless 2100
 Summary(pl):	Modu³ j±dra Linuksa SMP dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-PreReq:		kernel-net-hostap = 0.1.3
+PreReq:		kernel-net-hostap >= 0.1.3
 Requires:	ipw2100-firmware >= 1.2
 Requires:       hotplug
 %{?with_dist_kernel:%requires_releq_kernel_smp}
