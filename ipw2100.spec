@@ -168,11 +168,15 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with kernel}
 %files -n kernel-net-ipw2100
 %defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/av5100.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100.ko*
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/pbe5.ko*
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-net-ipw2100
 %defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/av5100.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ipw2100.ko*
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/pbe5.ko*
 %endif
 %endif
