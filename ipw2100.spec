@@ -15,12 +15,14 @@ Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
+# Source0-md5:	96473874bb682e2701c4e8e6dd662a64
 URL:		http://ipw2100.sourceforge.net/
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	sed >= 4.0
 %endif
+BuildConflicts: kernel-module-build < 2.6.0
 Requires:	ipw2100-firmware >= 1.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
