@@ -15,6 +15,7 @@ Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
+# Source0-md5:	9b4122863b5cc391794d5a2529f65156
 #Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
 URL:		http://ipw2100.sourceforge.net/
 %if %{with kernel}
@@ -23,7 +24,7 @@ BuildRequires:	kernel-source
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	sed >= 4.0
 %endif
-Requires:	ipw2100-firmware
+Requires:	ipw2100-firmware >= 1.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -40,7 +41,7 @@ Summary(pl):	Modu³ j±dra Linuksa dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap = 0.1.3
-Requires:	ipw2100-firmware >= 1.1
+Requires:	ipw2100-firmware >= 1.2
 Requires:	hotplug
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
@@ -59,7 +60,7 @@ Summary(pl):	Modu³ j±dra Linuksa SMP dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap = 0.1.3
-Requires:	ipw2100-firmware >= 1.1
+Requires:	ipw2100-firmware >= 1.2
 Requires:       hotplug
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
