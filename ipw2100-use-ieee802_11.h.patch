@@ -132,16 +132,3 @@ diff -u clean/ipw2100-0.46_3/ipw2100_main.c ipw2100-0.46_3/ipw2100_main.c
  		msg = "BEACON";
  		IPW2100_DEBUG_SCAN("Beacon\n");
  		isr_process_probe_response(
-diff -u clean/ipw2100-0.46_3/Makefile ipw2100-0.46_3/Makefile
---- clean/ipw2100-0.46_3/Makefile	2004-06-07 17:42:57.000000000 -0700
-+++ ipw2100-0.46_3/Makefile	2004-06-21 17:55:36.000000000 -0700
-@@ -78,7 +78,7 @@
- endif
- endif
- 
--EXTRA_CFLAGS += -I$(HOSTAP_SRC)
-+EXTRA_CFLAGS += -I$(HOSTAP_SRC) -I$(BASE)/drivers/net/wireless
- 
- list-m :=
- list-$(CONFIG_IPW2100) += ipw2100
-Common subdirectories: clean/ipw2100-0.46_3/patches and ipw2100-0.46_3/patches
