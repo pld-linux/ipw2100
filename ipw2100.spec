@@ -11,21 +11,20 @@
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
-Version:	0.46_3
-%define		_rel	0.2
+Version:	0.47
+%define		_rel	1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-# Source0-md5:	7f633f0f8fbd03d92e8ec3934f93a0b4
+# Source0-md5:	141c4d2f61d268499fe2fc0fce9b171d
 #Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
 URL:		http://ipw2100.sourceforge.net/
-Patch0:		%{name}_0.46_3-2.4.patch
-Patch1:		%{name}-use-ieee802_11.h.patch
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
-BuildRequires:	kernel-source >= 2.6.7
+BuildRequires:	kernel-source
 BuildRequires:	rpmbuild(macros) >= 1.153
+BuildRequires:	sed >= 4.0
 %endif
 Requires:	ipw2100-firmware
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -76,30 +75,11 @@ PRO/Wireless 2100.
 
 %prep
 %setup -q
-# -a1
-%patch0 -p0
-%patch1 -p1
+sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 
 %build
 %if %{with kernel}
 # kernel module(s)
-cat << EOF > Makefile
-EXTRA_CFLAGS += -I$PWD -I%{_kernelsrcdir}/drivers/net/wireless \\
-		-DCONFIG_IPW2100_PROMISC \\
-		-DCONFIG_IPW2100_LEGACY_FW_LOAD \\
-		-DCONFIG_IPW2100_NOWEP
-obj-m := ipw2100.o
-ipw2100-objs := ipw2100_main.o \\
-		ipw2100_fw.o \\
-		ipw2100_wx.o \\
-		ieee80211_tx.o \\
-		ieee80211_rx.o \\
-		ieee80211.o \\
-		ieee80211_wx.o
-obj-m += av5100.o
-obj-m += pbe5.o
-EOF
-
 rm -rf built
 mkdir -p built/{nondist,smp,up}
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
@@ -169,6 +149,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel-net-ipw2100
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/av5100.ko*
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/pbe5.ko*
 
@@ -176,6 +157,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel-smp-net-ipw2100
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/av5100.ko*
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ipw2100.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/pbe5.ko*
 %endif
