@@ -69,6 +69,14 @@ perl -pi -e's,# CONFIG_IPW2100_LEGACY_FW_LOAD=y,CONFIG_IPW2100_LEGACY_FW_LOAD=y,
 perl -pi -e's,/sbin/depmod,:,g' Makefile
 
 %build
+    rm -rf include
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+    touch include/config/MARKER
+
+
 %if %{with kernel}
 %{__make} \
 	 KSRC=%{_kernelsrcdir}
