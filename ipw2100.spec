@@ -19,7 +19,6 @@ Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
 URL:		http://ipw2100.sourceforge.net/
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
-BuildRequires:	kernel-source
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	sed >= 4.0
 %endif
