@@ -60,7 +60,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap >= 0.1.3
 Requires:	ipw2100-firmware >= 1.2
-Requires:       hotplug
+Requires:	hotplug
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 
@@ -82,24 +82,25 @@ sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 rm -rf built
 mkdir -p built/{nondist,smp,up}
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-	exit 1
-    fi
-    rm -rf include
-    install -d include/{linux,config}
-    ln -sf %{_kernelsrcdir}/config-$cfg .config
-    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-    touch include/config/MARKER
-    %{__make} -C %{_kernelsrcdir} clean \
-	RCS_FIND_IGNORE="-name '*.ko' -o" \
-	M=$PWD O=$PWD \
-	%{?with_verbose:V=1}
-    %{__make} -C %{_kernelsrcdir} modules \
-	CC="%{__cc}" CPP="%{__cpp}" \
-	M=$PWD O=$PWD \
-	%{?with_verbose:V=1}
-    mv *.ko built/$cfg
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	rm -rf include
+	install -d include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg .config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h \
+		include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	touch include/config/MARKER
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	mv *.ko built/$cfg
 done
 %endif
 
