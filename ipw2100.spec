@@ -2,19 +2,22 @@
 # TODO: rename spec to ipw2100.spec
 
 # Conditional build:
-%bcond_without	dist_kernel	# without distribution kernel
+%bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	userspace	# don't build userspace tools
+%bcond_without	smp		# don't build SMP module
+%bcond_without	userspace	# don't build userspace module
+%bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
 Version:	0.46_3
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
+# Source0-md5:	7f633f0f8fbd03d92e8ec3934f93a0b4
+#Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
 URL:		http://ipw2100.sourceforge.net/
 Patch0:		%{name}_0.46_3-2.4.patch
 Patch1:		%{name}-use-ieee802_11.h.patch
@@ -63,23 +66,53 @@ Ten pakiet zawiera sterowniki j±dra Linuksa SMP dla kart Intel(R)
 PRO/Wireless 2100.
 
 %prep
-%setup -q -a1
+%setup -q
+# -a1
 %patch0 -p0
 %patch1 -p1
-perl -pi -e's,# CONFIG_IPW2100_LEGACY_FW_LOAD=y,CONFIG_IPW2100_LEGACY_FW_LOAD=y,' Makefile
-perl -pi -e's,/sbin/depmod,:,g' Makefile
 
 %build
+%if %{with kernel}
+# kernel module(s)
+cat << EOF > Makefile
+EXTRA_CFLAGS += -I$PWD -I%{_kernelsrcdir}/drivers/net/wireless \\
+		-DCONFIG_IPW2100_PROMISC \\
+		-DCONFIG_IPW2100_LEGACY_FW_LOAD \\
+		-DCONFIG_IPW2100_NOWEP
+obj-m := ipw2100.o
+ipw2100-objs := ipw2100_main.o \\
+		ipw2100_fw.o \\
+		ipw2100_wx.o \\
+		ieee80211_tx.o \\
+		ieee80211_rx.o \\
+		ieee80211.o \\
+		ieee80211_wx.o
+obj-m += av5100.o
+obj-m += pbe5.o
+EOF
+
+rm -rf built
+mkdir -p built/{nondist,smp,up}
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+	exit 1
+    fi
     rm -rf include
     install -d include/{linux,config}
-    ln -sf %{_kernelsrcdir}/config-up .config
-    ln -sf %{_kernelsrcdir}/include/linux/autoconf-up.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
     ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
     touch include/config/MARKER
-
-%if %{with kernel}
-%{__make} \
-	 KSRC=%{_kernelsrcdir} 
+    %{__make} -C %{_kernelsrcdir} clean \
+	RCS_FIND_IGNORE="-name '*.ko' -o" \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+    %{__make} -C %{_kernelsrcdir} modules \
+	CC="%{__cc}" CPP="%{__cpp}" \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+    mv *.ko built/$cfg
+done
 %endif
 
 %install
@@ -91,10 +124,14 @@ install ipwinfo $RPM_BUILD_ROOT%{_sbindir}
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100
-%{__make} install \
-	KSRC=%{_kernelsrcdir} \
-	KMISC=$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100
+cd built
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net/wireless
+install %{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}/*.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless
+%if %{with smp} && %{with dist_kernel}
+install smp/*.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless
+%endif
 %endif
 
 %clean
@@ -122,9 +159,11 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with kernel}
 %files -n kernel-net-ipw2100
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100/*
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100.ko*
 
-#%files -n kernel-smp-net-ipw2100
-#%defattr(644,root,root,755)
-#/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ipw2100/*
+%if %{with smp} && %{with dist_kernel}
+%files -n kernel-smp-net-ipw2100
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ipw2100.ko*
+%endif
 %endif
