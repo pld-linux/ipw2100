@@ -11,13 +11,13 @@
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
-Version:	0.47
+Version:	0.49
 %define		_rel	1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-# Source0-md5:	141c4d2f61d268499fe2fc0fce9b171d
+# Source0-md5:	e086f77ed7aedc8ce3ecfc277cbbf8b1
 #Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
 URL:		http://ipw2100.sourceforge.net/
 %if %{with kernel}
@@ -44,6 +44,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap = 0.1.3
 Requires:	ipw2100-firmware >= 1.1
+Requires:	hotplug
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 
@@ -62,6 +63,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 PreReq:		kernel-net-hostap = 0.1.3
 Requires:	ipw2100-firmware >= 1.1
+Requires:       hotplug
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 
@@ -148,17 +150,13 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with kernel}
 %files -n kernel-net-ipw2100
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/av5100.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100.ko*
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/pbe5.ko*
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-net-ipw2100
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/av5100.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ipw2100.ko*
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/pbe5.ko*
 %endif
 %endif
