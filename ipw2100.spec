@@ -80,7 +80,8 @@ perl -pi -e's,/sbin/depmod,:,g' Makefile
 
 %if %{with kernel}
 %{__make} \
-	 KSRC=%{_kernelsrcdir}
+	 KSRC=%{_kernelsrcdir} \
+	 HOSTAP=%{_includedir}
 %endif
 
 %install
