@@ -1,0 +1,113 @@
+diff -u -p -r1.933 ipw2100_main.c
+--- ipw2100_main.c	7 Jun 2004 23:44:01 -0000	1.933
++++ ipw2100_main.c	8 Jun 2004 14:30:58 -0000
+@@ -207,8 +207,8 @@ static int channel = 1;
+ 
+ MODULE_PARM(debug, "i");
+ MODULE_PARM(if_name, "s");
+-MODULE_PARM(mode, 0);
+-MODULE_PARM(channel, 1);
++MODULE_PARM(mode, "i");
++MODULE_PARM(channel, "i");
+ 
+ #else /* LINUX_VERSION_CODE < 2.6.0 */
+ 
+@@ -1494,9 +1494,13 @@ static void ipw2100_down(struct ipw2100_
+ 		del_timer_sync(&priv->hang_check_timer);
+ 	}
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ 	/* Kill any pending resets */
+ 	if (priv->reset_pending == 2) /* 1 == instant reset, 2 == scheduled */
+ 		cancel_delayed_work(&priv->reset_work);
++#endif
++	/* On 2.4 schedule_delayed_work isn't used for the backoff -- instead
++	 * the work itself just goes to sleep for the backoff period.  */
+ 
+ 	/* Make sure the interrupt is on so that FW commands will be 
+ 	 * processed correctly */
+@@ -1525,7 +1529,19 @@ static void ipw2100_down(struct ipw2100_
+ void ipw2100_reset_adapter(struct ipw2100_priv *priv)
+ {
+ 	unsigned long flags;
++	unsigned long delay;
+ 	spin_lock_irqsave(&priv->low_lock, flags);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
++	if (priv->reset_backoff) {
++		delay = priv->reset_backoff * HZ;
++		spin_unlock_irqrestore(&priv->low_lock, flags);
++
++		set_current_state(TASK_UNINTERRUPTIBLE);
++		schedule_timeout(delay);
++
++		spin_lock_irqsave(&priv->low_lock, flags);
++	}
++#endif
+ 	printk(KERN_INFO DRV_NAME ": %s: Restarting adapter.\n", 
+ 	       priv->ndev->name);
+ 	priv->resets++;
+@@ -2050,7 +2066,11 @@ static inline void schedule_reset(struct
+ 			schedule_work(&priv->reset_work);
+ 		} else {
+ 			priv->reset_pending = 2;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ 			schedule_delayed_work(&priv->reset_work, priv->reset_backoff * HZ);
++#else
++			schedule_work(&priv->reset_work);
++#endif
+ 			if (priv->reset_backoff < MAX_RESET_BACKOFF)
+ 				priv->reset_backoff++;
+ 		}
+@@ -3791,6 +3811,7 @@ int ipw2100_enable_monitor(struct ipw210
+ 	priv->ieee.iw_mode = IW_MODE_MONITOR;
+ 	priv->ctx->channel = channel;
+ 
++	priv->reset_backoff = 0;
+ 	ipw2100_reset_adapter(priv);
+ 
+ 	priv->ndev->type = ARPHRD_IEEE80211;
+@@ -3818,6 +3839,7 @@ int ipw2100_disable_monitor(struct ipw21
+ 	else 
+ 		priv->ieee.iw_mode = IW_MODE_ADHOC;
+ 
++	priv->reset_backoff = 0;
+ 	ipw2100_reset_adapter(priv);
+ 
+ 	priv->ndev->type = ARPHRD_ETHER;
+@@ -3838,6 +3860,7 @@ int ipw2100_switch_mode(struct ipw2100_p
+ 		priv->ctx->channel = channel;
+ 	}
+ 
++	priv->reset_backoff = 0;
+ 	ipw2100_reset_adapter(priv);
+ 
+ 	return 0;
+@@ -5959,6 +5982,7 @@ static int ipw2100_set_address(struct ne
+ 	if (err)
+ 		return err;
+ 
++	priv->reset_backoff = 0;
+ 	ipw2100_reset_adapter(priv);
+ 
+ 	return 0;
+@@ -6483,7 +6507,7 @@ static int ipw2100_pci_init_one(struct p
+ 		goto fail;
+ 	}
+ 
+-	/* If the RF Kill switch is enabled, go ahead and complete the
++	/* If the RF Kill switch is disabled, go ahead and complete the
+ 	 * startup sequence */
+ 	if (!priv->rf_kill) {
+ 		/* Enable the adapter - sends HOST_COMPLETE */
+@@ -6547,6 +6571,11 @@ static void __devexit ipw2100_pci_remove
+ 		 * being called if the device is open.  If we free storage
+ 		 * first, then close() will crash. */
+ 		unregister_netdev(dev);
++
++		/* We may need to introduce some code to prevent 
++		 * schedule_work race conditions to ensure that 
++		 * all scheduled work has completed before we take 
++		 * down the driver */
+ 
+ 		ieee80211_deinit(&priv->ieee);
+ 
