@@ -1,6 +1,4 @@
-
-# TODO: rename spec to ipw2100.spec
-
+#
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -11,13 +9,12 @@
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
-Version:	0.49
-%define		_rel	1
+Version:	0.50
+%define		_rel	0.1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-# Source0-md5:	e086f77ed7aedc8ce3ecfc277cbbf8b1
 #Source1:	http://hostap.epitest.fi/releases/hostap-driver-0.1.3.tar.gz
 URL:		http://ipw2100.sourceforge.net/
 %if %{with kernel}
