@@ -24,7 +24,7 @@ BuildRequires:	sed >= 4.0
 %endif
 BuildConflicts: kernel-module-build < 2.6.0
 Requires:	ipw2100-firmware >= 1.3
-ExclusiveArch:	%{ix86} amd64
+ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
