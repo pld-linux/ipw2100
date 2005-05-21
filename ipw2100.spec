@@ -10,7 +10,7 @@ Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
 Version:	1.0.2
-%define		_rel	2
+%define		_rel	3
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
