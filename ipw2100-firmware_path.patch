@@ -1,0 +1,33 @@
+--- ipw2100-1.0.2/INSTALL~	Thu Jun  2 23:14:02 2005
++++ ipw2100-1.0.2/INSTALL	Thu Jun  2 23:14:02 2005
+@@ -205,7 +205,7 @@
+ 	ipw2100-1.2-p.fw	Monitor mode
+ 
+ You need to place all of these files into the hotplug firmware directory
+-(typically /usr/lib/hotplug/firmware/ -- check the contents of the
++(typically /lib/firmware/ -- check the contents of the
+ /etc/hotplug/firmware.agent to determine the specific location for your
+ distribution)
+ 
+--- ipw2100-1.0.2/ipw2100.c~	Thu Jun  2 23:12:27 2005
++++ ipw2100-1.0.2/ipw2100.c	Thu Jun  2 23:12:27 2005
+@@ -8631,16 +8631,16 @@
+ 	if (!firmware) {
+ 		switch (priv->ieee->iw_mode) {
+ 		case IW_MODE_ADHOC:
+-			fw_name = "/etc/firmware/" IPW2100_FW_NAME("-i");
++			fw_name = "/lib/firmware/" IPW2100_FW_NAME("-i");
+ 			break;
+ #ifdef CONFIG_IPW2100_PROMISC
+ 		case IW_MODE_MONITOR:
+-			fw_name = "/etc/firmware/" IPW2100_FW_NAME("-p");
++			fw_name = "/lib/firmware/" IPW2100_FW_NAME("-p");
+ 			break;
+ #endif
+ 		case IW_MODE_INFRA:
+ 		default:
+-			fw_name = "/etc/firmware/" IPW2100_FW_NAME("");
++			fw_name = "/lib/firmware/" IPW2100_FW_NAME("");
+ 			break;
+ 		}
+ 	} else 
