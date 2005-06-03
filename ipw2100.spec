@@ -9,13 +9,13 @@
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
-Version:	1.0.2
-%define		_rel	4
+Version:	1.1.0
+%define		_rel	0.1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-# Source0-md5:	5ba45b7586ee61e319681d6c5f77616e
+# Source0-md5:	d185a19e73895a4f4e8401b536f6d6ef
 Patch0:		%{name}-firmware_path.patch
 URL:		http://ipw2100.sourceforge.net/
 %if %{with kernel}
@@ -24,7 +24,7 @@ BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	sed >= 4.0
 %endif
 BuildConflicts: kernel-module-build < 2.6.0
-Requires:	ipw2100-firmware >= 1.3
+Requires:	ipw2100-firmware = 1.3
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -42,7 +42,7 @@ Summary(pl):	Modu³ j±dra Linuksa dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 #PreReq:	kernel-net-hostap >= 0.1.3
-Requires:	ipw2100-firmware >= 1.2
+Requires:	ipw2100-firmware = 1.3
 Requires:	hotplug
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
@@ -61,7 +61,7 @@ Summary(pl):	Modu³ j±dra Linuksa SMP dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 #PreReq:	kernel-net-hostap >= 0.1.3
-Requires:	ipw2100-firmware >= 1.2
+Requires:	ipw2100-firmware = 1.3
 Requires:	hotplug
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
@@ -76,7 +76,7 @@ PRO/Wireless 2100.
 
 %prep
 %setup -q
-%patch0 -p1
+##%patch0 -p1
 sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 
 %build
@@ -94,6 +94,9 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h \
 		include/linux/autoconf.h
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	%if %{without dist_kernel}
+		ln -sf %{_kernelsrcdir}/scripts
+	%endif
 	touch include/config/MARKER
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
