@@ -9,13 +9,13 @@
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
-Version:	1.1.2
+Version:	1.1.3
 %define		_rel	0.1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-# Source0-md5:	604d44b15a0e0653897ca323310253dc
+# Source0-md5:	97403ca85730eb7f2d06d9dcbb653228
 Patch0:		%{name}-firmware_path.patch
 URL:		http://ipw2100.sourceforge.net/
 BuildRequires:  ieee80211-devel
@@ -150,20 +150,20 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc README* LICENSE ISSUES
+%doc README* LICENSE
 %attr(755,root,root) %{_sbindir}/ipwinfo
 %endif
 
 %if %{with kernel}
 %files -n kernel-net-ipw2100
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ieee80211*.ko*
+#/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100.ko*
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-net-ipw2100
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ieee80211*.ko*
+#/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/wireless/ipw2100.ko*
 %endif
 %endif
