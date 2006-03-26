@@ -81,6 +81,7 @@ PRO/Wireless 2100.
 sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 
 %build
+%if %{with kernel}
 # kernel module(s)
 rm -rf built
 mkdir -p built/{nondist,smp,up}
@@ -114,6 +115,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
                 %{?with_verbose:V=1}
         mv *.ko built/$cfg
 done
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
