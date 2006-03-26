@@ -9,13 +9,13 @@
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
-Version:	1.1.4
+Version:	1.2.1
 %define		_rel	1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
-# Source0-md5:	4f762f0f65d9f45c763f8efb0fdbf2bb
+# Source0-md5:	9db50b836c63dc3a7e56653d2009717a
 Patch0:		%{name}-firmware_path.patch
 URL:		http://ipw2100.sourceforge.net/
 BuildRequires:  ieee80211-devel
@@ -81,37 +81,39 @@ PRO/Wireless 2100.
 sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 
 %build
-%if %{with kernel}
 # kernel module(s)
 rm -rf built
 mkdir -p built/{nondist,smp,up}
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	rm -rf include
-	install -d include/{linux,config}
-	ln -sf %{_kernelsrcdir}/config-$cfg .config
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h \
-		include/linux/autoconf.h
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-	%if %{without dist_kernel}
-		ln -sf %{_kernelsrcdir}/scripts
-	%endif
-	touch include/config/MARKER
-	export IEEE80211_INC=/lib/modules/%{_kernel_ver}/include
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-		CC="%{__cc}" CPP="%{__cpp}" \
-		M=$PWD O=$PWD \
-		%{?with_verbose:V=1}
-	mv *.ko built/$cfg
-done
+        if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+                exit 1
+        fi
+        install -d o/include/linux
+        ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+        ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+%if %{with dist_kernel}
+        %{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+%else
+        install -d o/include/config
+        touch o/include/config/MARKER
+        ln -sf %{_kernelsrcdir}/scripts o/scripts
 %endif
+        export IEEE80211_INC=%{_kernelsrcdir}/include
+        %{__make} -C %{_kernelsrcdir} clean \
+                RCS_FIND_IGNORE="-name '*.ko' -o" \
+                SYSSRC=%{_kernelsrcdir} \
+                SYSOUT=$PWD/o \
+                M=$PWD O=$PWD/o \
+                %{?with_verbose:V=1}
+        %{__make} -C %{_kernelsrcdir} modules \
+                CC="%{__cc}" CPP="%{__cpp}" \
+                SYSSRC=%{_kernelsrcdir} \
+                SYSOUT=$PWD/o \
+                M=$PWD O=$PWD/o \
+                %{?with_verbose:V=1}
+        mv *.ko built/$cfg
+done
 
 %install
 rm -rf $RPM_BUILD_ROOT
