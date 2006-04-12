@@ -6,11 +6,11 @@
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
 #
+%define		_rel	1
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
 Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
 Version:	1.2.1
-%define		_rel	1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
@@ -18,13 +18,13 @@ Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
 # Source0-md5:	9db50b836c63dc3a7e56653d2009717a
 Patch0:		%{name}-firmware_path.patch
 URL:		http://ipw2100.sourceforge.net/
-BuildRequires:  ieee80211-devel
+BuildRequires:	ieee80211-devel
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	sed >= 4.0
 %endif
-BuildConflicts: kernel-module-build < 2.6.0
+BuildConflicts:	kernel-module-build < 2.6.0
 Requires:	ipw2100-firmware = 1.3
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -42,9 +42,9 @@ Summary:	Linux kernel module for the Intel(R) PRO/Wireless 2100
 Summary(pl):	Modu³ j±dra Linuksa dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-#PreReq:	kernel-net-hostap >= 0.1.3
-Requires:	ipw2100-firmware = 1.3
 Requires:	hotplug
+Requires:	ipw2100-firmware = 1.3
+#Requires:	kernel-net-hostap >= 0.1.3
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 
@@ -61,9 +61,9 @@ Summary:	Linux SMP kernel module for the Intel(R) PRO/Wireless 2100
 Summary(pl):	Modu³ j±dra Linuksa SMP dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-#PreReq:	kernel-net-hostap >= 0.1.3
-Requires:	ipw2100-firmware = 1.3
 Requires:	hotplug
+Requires:	ipw2100-firmware = 1.3
+#Requires:	kernel-net-hostap >= 0.1.3
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 
@@ -86,34 +86,34 @@ sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 rm -rf built
 mkdir -p built/{nondist,smp,up}
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-        if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-                exit 1
-        fi
-        install -d o/include/linux
-        ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-        ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	install -d o/include/linux
+	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
 %if %{with dist_kernel}
-        %{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
 %else
-        install -d o/include/config
-        touch o/include/config/MARKER
-        ln -sf %{_kernelsrcdir}/scripts o/scripts
+	install -d o/include/config
+	touch o/include/config/MARKER
+	ln -sf %{_kernelsrcdir}/scripts o/scripts
 %endif
-        export IEEE80211_INC=%{_kernelsrcdir}/include
-        %{__make} -C %{_kernelsrcdir} clean \
-                RCS_FIND_IGNORE="-name '*.ko' -o" \
-                SYSSRC=%{_kernelsrcdir} \
-                SYSOUT=$PWD/o \
-                M=$PWD O=$PWD/o \
-                %{?with_verbose:V=1}
-        %{__make} -C %{_kernelsrcdir} modules \
-                CC="%{__cc}" CPP="%{__cpp}" \
-                SYSSRC=%{_kernelsrcdir} \
-                SYSOUT=$PWD/o \
-                M=$PWD O=$PWD/o \
-                %{?with_verbose:V=1}
-        mv *.ko built/$cfg
+	export IEEE80211_INC=%{_kernelsrcdir}/include
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		SYSSRC=%{_kernelsrcdir} \
+		SYSOUT=$PWD/o \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		SYSSRC=%{_kernelsrcdir} \
+		SYSOUT=$PWD/o \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	mv *.ko built/$cfg
 done
 %endif
 
