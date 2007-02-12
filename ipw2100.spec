@@ -8,7 +8,7 @@
 #
 %define		_rel	1
 Summary:	Intel(R) PRO/Wireless 2100 Driver for Linux
-Summary(pl):	Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
+Summary(pl.UTF-8):   Sterownik dla Linuksa do kart Intel(R) PRO/Wireless 2100
 Name:		ipw2100
 Version:	1.2.1
 Release:	%{_rel}
@@ -33,13 +33,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This project was created by Intel to enable support for the Intel
 PRO/Wireless 2100 Network Connection mini PCI adapter.
 
-%description -l pl
-Ten projekt zosta³ stworzony przez Intela, aby umo¿liwiæ obs³ugê kart
+%description -l pl.UTF-8
+Ten projekt zostaÅ‚ stworzony przez Intela, aby umoÅ¼liwiÄ‡ obsÅ‚ugÄ™ kart
 mini PCI Intel PRO/Wireless 2100 Network Connection.
 
 %package -n kernel-net-ipw2100
 Summary:	Linux kernel module for the Intel(R) PRO/Wireless 2100
-Summary(pl):	Modu³ j±dra Linuksa dla kart Intel(R) PRO/Wireless 2100
+Summary(pl.UTF-8):   ModuÅ‚ jÄ…dra Linuksa dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires:	hotplug
@@ -52,13 +52,13 @@ Requires(post,postun):	/sbin/depmod
 This package contains Linux kernel drivers for the Intel(R)
 PRO/Wireless 2100.
 
-%description -n kernel-net-ipw2100 -l pl
-Ten pakiet zawiera sterowniki j±dra Linuksa dla kart Intel(R)
+%description -n kernel-net-ipw2100 -l pl.UTF-8
+Ten pakiet zawiera sterowniki jÄ…dra Linuksa dla kart Intel(R)
 PRO/Wireless 2100.
 
 %package -n kernel-smp-net-ipw2100
 Summary:	Linux SMP kernel module for the Intel(R) PRO/Wireless 2100
-Summary(pl):	Modu³ j±dra Linuksa SMP dla kart Intel(R) PRO/Wireless 2100
+Summary(pl.UTF-8):   ModuÅ‚ jÄ…dra Linuksa SMP dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires:	hotplug
@@ -71,8 +71,8 @@ Requires(post,postun):	/sbin/depmod
 This package contains Linux SMP kernel drivers for the Intel(R)
 PRO/Wireless 2100.
 
-%description -n kernel-smp-net-ipw2100 -l pl
-Ten pakiet zawiera sterowniki j±dra Linuksa SMP dla kart Intel(R)
+%description -n kernel-smp-net-ipw2100 -l pl.UTF-8
+Ten pakiet zawiera sterowniki jÄ…dra Linuksa SMP dla kart Intel(R)
 PRO/Wireless 2100.
 
 %prep
