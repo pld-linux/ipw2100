@@ -2,6 +2,7 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
+%bcond_without	up		# don't build UP module
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
@@ -159,10 +160,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
+%if %{with up} || %{without dist_kernel}
 %files -n kernel-net-ipw2100
 %defattr(644,root,root,755)
 #/lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ieee80211*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/wireless/ipw2100.ko*
+%if %{with up} || %{without dist_kernel}
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-net-ipw2100
