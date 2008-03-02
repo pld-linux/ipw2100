@@ -17,6 +17,7 @@ Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/ipw2100/%{name}-%{version}.tgz
 # Source0-md5:	ce77c41f2718aa8d70579351b475cd80
 Patch0:		%{name}-firmware_path.patch
+Patch1:		%{name}-2.6.24.patch
 URL:		http://ipw2100.sourceforge.net/
 BuildRequires:	ieee80211-devel
 %if %{with kernel}
@@ -59,6 +60,7 @@ PRO/Wireless 2100.
 %prep
 %setup -q
 ##%patch0 -p1
+%patch1 -p1
 sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 
 %build
