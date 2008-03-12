@@ -21,7 +21,7 @@ Patch1:		%{name}-2.6.24.patch
 URL:		http://ipw2100.sourceforge.net/
 BuildRequires:	ieee80211-devel
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.20.2}
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	sed >= 4.0
 %endif
@@ -38,7 +38,7 @@ PRO/Wireless 2100 Network Connection mini PCI adapter.
 Ten projekt został stworzony przez Intela, aby umożliwić obsługę kart
 mini PCI Intel PRO/Wireless 2100 Network Connection.
 
-%package -n kernel-net-ipw2100
+%package -n kernel%{_alt_kernel}-net-ipw2100
 Summary:	Linux kernel module for the Intel(R) PRO/Wireless 2100
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla kart Intel(R) PRO/Wireless 2100
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -49,11 +49,11 @@ Requires:	ipw2100-firmware = 1.3
 %{?with_dist_kernel:%requires_releq_kernel}
 Requires(post,postun):	/sbin/depmod
 
-%description -n kernel-net-ipw2100
+%description -n kernel%{_alt_kernel}-net-ipw2100
 This package contains Linux kernel drivers for the Intel(R)
 PRO/Wireless 2100.
 
-%description -n kernel-net-ipw2100 -l pl.UTF-8
+%description -n kernel%{_alt_kernel}-net-ipw2100 -l pl.UTF-8
 Ten pakiet zawiera sterowniki jądra Linuksa dla kart Intel(R)
 PRO/Wireless 2100.
 
@@ -84,10 +84,10 @@ install ipwinfo $RPM_BUILD_ROOT%{_sbindir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-n kernel-net-ipw2100
+%post	-n kernel%{_alt_kernel}-net-ipw2100
 %depmod %{_kernel_ver}
 
-%postun	-n kernel-net-ipw2100
+%postun	-n kernel%{_alt_kernel}-net-ipw2100
 %depmod %{_kernel_ver}
 
 %if %{with userspace}
@@ -98,7 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%files -n kernel-net-ipw2100
+%files -n kernel%{_alt_kernel}-net-ipw2100
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/ipw2100-%{_mod_suffix}.ko*
 %endif
