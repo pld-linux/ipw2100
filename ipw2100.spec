@@ -59,8 +59,8 @@ PRO/Wireless 2100.
 
 %prep
 %setup -q
-##%patch0 -p1
-%patch1 -p1
+##%%patch0 -p1
+%patch -P1 -p1
 sed -i 's:CONFIG_IPW2100_DEBUG=y::' Makefile
 
 %build
